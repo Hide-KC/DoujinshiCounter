@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.util.Log
@@ -22,6 +23,7 @@ class CameraFragment: Fragment() {
     private var surfaceCreated = false
     private val defCameraFacing = CameraFacing.FACING_FRONT
     private var listener: IBarcodeDetectionListener? = null
+    private var handler: Handler? = null
 
     enum class CameraFacing(val rawValue: Int){
         FACING_BACK(0), FACING_FRONT(1)
@@ -90,6 +92,9 @@ class CameraFragment: Fragment() {
     private fun startCameraSource(holder: SurfaceHolder){
         try {
             if (ContextCompat.checkSelfPermission(context!!, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
+                if (handler == null){
+                    handler = Handler()
+                }
                 cameraSource?.start(holder)
             }
         } catch (e: IOException){
@@ -111,28 +116,17 @@ class CameraFragment: Fragment() {
         override fun receiveDetections(detections: Detector.Detections<Barcode>?) {
             //認識された結果がdetectionsに入ってくる
             if (detections != null){
-                listener?.detected(detections.detectedItems)
-//                if (detections.detectedItems.size() > 0){
-//                    for (i: Int in 0 until detections.detectedItems.size()){
-//                        val key = detections.detectedItems.keyAt(i)
-//                        val barcode = detections.detectedItems.get(key)
-//                        val barcodeValue = barcode.rawValue
-//                        val rect = barcode.boundingBox
-//                    }
-//                } else {
-//                    Log.d(javaClass.simpleName, "detections.size = 0")
-//                }
+                handler?.post{
+                    listener?.detected(detections.detectedItems)
+                }
             } else {
-//                Log.d(javaClass.simpleName, "detections = null")
                 throw IllegalStateException() //たぶん到達しない
             }
         }
     }
 
     inner class SurfaceCallback: SurfaceHolder.Callback{
-        override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
-
-        }
+        override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) { }
 
         override fun surfaceDestroyed(holder: SurfaceHolder?) {
             if (cameraSource != null){
@@ -145,7 +139,7 @@ class CameraFragment: Fragment() {
         @SuppressLint("MissingPermission")
         override fun surfaceCreated(holder: SurfaceHolder?) {
             try {
-                if (holder != null && permissionCheck()) cameraSource?.start(holder)
+                if (holder != null && permissionCheck()) startCameraSource(holder)
             } catch (e: IOException){
                 Log.d(javaClass.simpleName, e.message)
             }

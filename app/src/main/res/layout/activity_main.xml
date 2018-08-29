@@ -17,7 +17,7 @@
         app:layout_constraintStart_toEndOf="@+id/left_count" />
 
     <TextView
-        android:id="@+id/sale_count"
+        android:id="@+id/sold_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="64dp"
@@ -45,8 +45,8 @@
         android:layout_marginStart="8dp"
         android:text="部頒布"
         android:textSize="64sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/sale_count"
-        app:layout_constraintStart_toEndOf="@+id/sale_count" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/sold_count"
+        app:layout_constraintStart_toEndOf="@+id/sold_count" />
 
     <TextView
         android:id="@+id/nokori"
@@ -57,7 +57,7 @@
         android:text="残りだいたい"
         android:textSize="36sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sale_count" />
+        app:layout_constraintTop_toBottomOf="@+id/sold_count" />
 
     <TextView
         android:id="@+id/tadaima"
@@ -106,5 +106,15 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.65" />
+
+    <Button
+        android:id="@+id/reset"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="24dp"
+        android:text="Reset"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/list_frame" />
 
 </android.support.constraint.ConstraintLayout>
